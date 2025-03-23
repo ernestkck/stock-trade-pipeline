@@ -1,10 +1,11 @@
 # stock-trade-pipeline
-A pipeline to ingest, process, and analyse real-time stock trade data
+This project automates the process of fetching stock trade data, transforming it, and storing it for further analysis. The pipeline is designed to be modular and scalable, using cloud services and modern data engineering tools such as AWS S3, Databricks and Airflow.
 
+## Components
 
-## fetch_stock_data.py
-Fetches stock data for a specified symbol from the Alpha Vantage API,
-saves the data locally, and uploads it to an S3 bucket.
-
-## databricks_s3_catalog.ipynb
-Databricks is used to transform the data. Since serverless warehouse doesn't allow configurations of fs.s3a properties via spark.conf.set and dbutils.fs.mount, Unity Catalog is used to access S3 in Databricks. An external location is added after adding the required IAM role and policies in AWS (see https://docs.databricks.com/aws/en/connect/unity-catalog/cloud-storage/storage-credentials#step-1-create-an-iam-role). Then we can read the JSON files and write write parquet files back to S3.
+- `src/fetch_stock_data.py`: Fetches stock data for specified symbols from the Alpha Vantage API and uploads it to an S3 bucket.
+- `databricks_notebooks/transform_stock_data.ipynb`: Transforms the raw stock data using Databricks and PySpark. \
+**Notes**:
+  - Unity Catalog is used to access S3 in Databricks (Trial) due to serverless warehouse limitations.
+  - IAM roles and policies must be configured in AWS to enable access (see [Databricks Unity Catalog Documentation](https://docs.databricks.com/aws/en/connect/unity-catalog/cloud-storage/storage-credentials#step-1-create-an-iam-role)).
+- `dags/stock_pipeline_dag.py`: Orchestrates the pipeline using Apache Airflow.
